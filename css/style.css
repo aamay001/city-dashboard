@@ -1,0 +1,31 @@
+html
+{
+    color : #ffffff;
+}
+
+body
+{
+    background-color: #37474f;
+}
+
+.cd-navbar
+{
+    background-color: #212121;
+}
+
+.cd-navbar h1
+{
+    font-size: 2rem;
+    line-height: 110%;
+    margin: 1.14rem 0 .912rem 0;
+}
+
+.cd-main-header
+{
+    text-align: center;
+}
+
+.cd-main-content
+{
+    margin-top : 15%;
+}

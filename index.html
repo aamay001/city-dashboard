@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>City Dashboard</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="A simple dashboard of your city in material design." >
+        
+        <!-- CSS -->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css">
+        <link href="css/style.css" rel="stylesheet" type="text/css">
+
+        <!-- JS -->
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+                integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+                crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js"></script>
+        <script src="js/app.js" type="text/javascript"></script>
+    </head>
+    <body>
+        <div class="navbar-fixed" role="navigation">
+            <nav>
+                <div class="nav-wrapper cd-navbar">                    
+                    <span class="brand-logo center">
+                        <h1>City Dashboard</h1>
+                    </span>
+                </div>
+            </nav>
+        </div>
+
+        <div class="container cd-main-content">
+            <section role="banner">
+                <div class="row">
+                    <div class="col s12 cd-main-header">
+                        <p>Enter your City Name</p>
+                    </div>                
+                </div>
+            </section>
+            <section role="main">
+                <div class="row">
+                    <div class="col s12">
+                        <div class="row">
+                            <div class="col s12">
+                                <div class="row">
+                                    <div class="input-field col s12">
+                                        <form> 
+                                            <i class="material-icons prefix">search</i>
+                                            <input type="text" id="autocomplete-input" class="autocomplete">
+                                            <label for="autocomplete-input">Autocomplete</label>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col s6"></div>
+                </div>
+            </section>              
+        </div>    
+    </body>
+</html>
