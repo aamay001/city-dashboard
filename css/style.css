@@ -1,17 +1,7 @@
-html
-{
-    color : #ffffff;
-}
-
 body
 {
     background-color: #fafafa ;
     color: #000000;
-}
-
-.cd-navbar
-{
-    background-color: #2196f3;
 }
 
 .cd-navbar h1
@@ -46,4 +36,9 @@ body
     position : fixed;
     display: none;
     z-index: -1;
+}
+
+.cd-main-content
+{
+    z-index: 10 !important;
 }
