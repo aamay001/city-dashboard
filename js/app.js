@@ -50,7 +50,7 @@ function onReady() {
 ///////////////////////////////////////////////////////////////////////////////
 function showSearch() {
     $(CD_HTML.bannerSubtext).hide();
-    $(CD_HTML.bannerHeader).text("Enter you city's name.")
+    $(CD_HTML.bannerHeader).text("Enter your city's name.")
     $(CD_HTML.searchContainer).fadeIn('slow');
 }
 
