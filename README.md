@@ -1,6 +1,6 @@
 # City Dashboard
 
-Capstone project at Thinkful while learning about Asyn Requests.
+Capstone project at Thinkful while learning about Async Requests.
 
 Dashboard with live info about your city.
 
