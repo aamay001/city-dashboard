@@ -12,7 +12,7 @@ const CD_GOOGLE_APIS = {
 };
 
 const CD_OPEN_WEATHER_API = {
-    url : 'https://api.openweathermap.org/data/2.5/forecast/daily',
+    url : 'http://api.openweathermap.org/data/2.5/forecast/daily',
     key : 'add0c60b285e82414e6645f990831a9e'
 };
 
