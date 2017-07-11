@@ -8,6 +8,10 @@ const CD_GOOGLE_APIS = {
     MAPS_EMBED : {
         url : 'https://www.google.com/maps/embed/v1/streetview',
         key : 'AIzaSyBmnWXOGe8XT8YMAvkIK_VxCOEfcRVyHOo'
+    },
+    PLACES : {
+        url : 'https://maps.googleapis.com/maps/api/place/textsearch/json',
+        key : 'AIzaSyC2pqN-zuTGM8WFhk8QAVuL8MOrhy3xT-Y'
     }
 };
 
@@ -80,8 +84,10 @@ function showWeatherInformation(res) {
     let weatherDataHTML = getWeatherDataHTML();
     $(CD_HTML.contentAreaContainer).append(`
             <div class="row">
-                <div class="col s12 grey-text text-darken-4">
-                    <h3 class="header">Weather Forecast</h3>
+                <div class="col s12 m8 l6">
+                    <div class="card-content grey-text text-lighten-5">
+                        <h4>Weather Forecast</h4>
+                    </div>                  
                 </div>
             </div>`);
     $(CD_HTML.contentAreaContainer).append(weatherDataHTML);
@@ -90,13 +96,6 @@ function showWeatherInformation(res) {
 function showWeatherError(err) {
     console.log('Error getting weather.');
     console.log(err.message);
-    $(CD_HTML.contentAreaContainer).append(`
-            <div class="row">
-                <div class="col s12 grey-text text-darken-4">
-                    <h3 class="header" style="color:red">Error Getting Weather :(</h3>
-                </div>
-            </div>`);
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -195,7 +194,7 @@ function getWeatherData(resolve, reject) {
 
 function getWeatherDataSuccess(res, resolve) {
     cdUserLocation.weather = res.list;
-    console.log(`User location updated: Temp  ${cdUserLocation.weather[0].temp.day}`);
+    console.log(`User location updated: Temp ${cdUserLocation.weather[0].temp.day}°F`);
     resolve(cdUserLocation.weather);
 }
 
@@ -225,7 +224,7 @@ function getWeatherDataHTML() {
     cdUserLocation.weather.map(
         function(item){
             element.append(
-                `<div class="col s12 m3">
+                `<div class="col s12 m6 l6 xl3">
                     <div class="card blue lighten-4 grey-text text-darken-4">
                         <div class="card-content">
                         <img src="https://openweathermap.org/img/w/${item.weather[0].icon}.png" alt='Icon for current weather.' style="float:right"/>
