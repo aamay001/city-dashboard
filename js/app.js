@@ -8,6 +8,10 @@ const CD_GOOGLE_APIS = {
     MAPS_EMBED : {
         url : 'https://www.google.com/maps/embed/v1/streetview',
         key : 'AIzaSyBmnWXOGe8XT8YMAvkIK_VxCOEfcRVyHOo'
+    },
+    PLACES : {
+        url : 'https://maps.googleapis.com/maps/api/place/textsearch/json',
+        key : 'AIzaSyC2pqN-zuTGM8WFhk8QAVuL8MOrhy3xT-Y'
     }
 };
 
@@ -59,7 +63,7 @@ function showDashboard(res) {
     $(CD_HTML.navBarText).html(res.city);    
     setMapBackground();
     $(window).on('resize', setMapBackground);
-    getWeather().then(showWeatherInformation);
+    getWeather().then(showWeatherInformation).catch(showWeatherError);
 }
 
 function setMapBackground() {
@@ -80,11 +84,18 @@ function showWeatherInformation(res) {
     let weatherDataHTML = getWeatherDataHTML();
     $(CD_HTML.contentAreaContainer).append(`
             <div class="row">
-                <div class="col s12 grey-text text-darken-4">
-                    <h3 class="header">Weather Forecast</h3>
+                <div class="col s12 m8 l6">
+                    <div class="card-content grey-text text-lighten-5">
+                        <h4>Weather Forecast</h4>
+                    </div>                  
                 </div>
             </div>`);
     $(CD_HTML.contentAreaContainer).append(weatherDataHTML);
+}
+
+function showWeatherError(err) {
+    console.log('Error getting weather.');
+    console.log(err.message);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -102,6 +113,9 @@ function getUserLocation(resolve, reject) {
             function(position){ getPositionSuccess(position, resolve, reject) }, 
             function(err) { getPositionError(err, reject) }, geolocationOps);        
     }
+
+    else
+        reject('Geolocation unavailable.');
 }
 
 function getPositionSuccess(position, resolve, reject) {
@@ -123,23 +137,29 @@ function getUserLocality(resolve, reject) {
                     key : CD_GOOGLE_APIS.GEOCODING.key
                  }
     $.getJSON(CD_GOOGLE_APIS.GEOCODING.url, params)
-        .then( function(res) { getLocalitySuccess(res, resolve) })
+        .then( function(res) { getLocalitySuccess(res, resolve, reject) })
         .fail( function(err) { getLocalityError(err, reject) }); 
 }
 
-function getLocalitySuccess(res, resolve) {
-    let cities = res.results.map(
-        function(item) {
-            if ( item.formatted_address && "locality" === item.types[0] )
-                return item.formatted_address;
-        }).filter(
-        function(item) { 
-            if ( item ) return item;
-        });
-    
-    cdUserLocation.city = cities;    
-    console.log( `User location updated: ${cdUserLocation.city}` );
-    resolve(cdUserLocation);
+function getLocalitySuccess(res, resolve, reject) {
+    if ( res.results)
+    {
+        let cities = res.results.map(
+            function(item) {
+                if ( item.formatted_address && "locality" === item.types[0] )
+                    return item.formatted_address;
+            }).filter(
+            function(item) { 
+                if ( item ) return item;
+            });
+        
+        cdUserLocation.city = cities;    
+        console.log( `User location updated: ${cdUserLocation.city}` );
+        resolve(cdUserLocation);
+    } else {
+        console.log('User locality could not be determined.');
+        reject('The results returned by Google were not determinate.');
+    }
 }
 
 function getLocalityError(err, reject) {
@@ -174,7 +194,7 @@ function getWeatherData(resolve, reject) {
 
 function getWeatherDataSuccess(res, resolve) {
     cdUserLocation.weather = res.list;
-    console.log(`User location updated: Temp  ${cdUserLocation.weather[0].temp.day}`);
+    console.log(`User location updated: Temp ${cdUserLocation.weather[0].temp.day}°F`);
     resolve(cdUserLocation.weather);
 }
 
@@ -204,7 +224,7 @@ function getWeatherDataHTML() {
     cdUserLocation.weather.map(
         function(item){
             element.append(
-                `<div class="col s12 m3">
+                `<div class="col s12 m6 l6 xl3">
                     <div class="card blue lighten-4 grey-text text-darken-4">
                         <div class="card-content">
                         <img src="https://openweathermap.org/img/w/${item.weather[0].icon}.png" alt='Icon for current weather.' style="float:right"/>
