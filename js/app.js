@@ -8,10 +8,6 @@ const CD_GOOGLE_APIS = {
     MAPS_EMBED : {
         url : 'https://www.google.com/maps/embed/v1/streetview',
         key : 'AIzaSyBmnWXOGe8XT8YMAvkIK_VxCOEfcRVyHOo'
-    },
-    PLACES : {
-        url : 'https://maps.googleapis.com/maps/api/place/textsearch/json',
-        key : 'AIzaSyC2pqN-zuTGM8WFhk8QAVuL8MOrhy3xT-Y'
     }
 };
 
@@ -20,11 +16,18 @@ const CD_OPEN_WEATHER_API = {
     key : 'add0c60b285e82414e6645f990831a9e'
 };
 
+const CD_UNSPLASH_API = {
+    url : 'https://api.unsplash.com/photos/random',
+    client_id : 'a9698e9b2689360008f762c5b92efb67c9c33f9141fc65ec81571a08a80ecf30'
+}
+
+var cdAutcomplete = {};
 var cdUserLocation = {
         longitude : undefined,
         latitude : undefined,
         city : undefined,
-        weather : undefined
+        weather : undefined,
+        background : undefined
     };
 
 
@@ -35,6 +38,7 @@ const CD_HTML = {
         bannerHeader : '.js-cd-main-header h2',
         bannerSubtext : '.js-cd-main-header em',
         searchContainer : '.js-cd-search-container',
+        searchInput: 'cd-search-input',
         mapBackground : 'div.js-cd-map-background',
         contentAreaContainer : '.js-cd-content-area-container'
     };
@@ -43,10 +47,44 @@ const CD_HTML = {
 $(onReady);
 
 function onReady() {
+
+    bindUserInput();    
+
+    cdAutcomplete.addListener('place_changed', onPlaceChanged);
+
     let locationPromise = new Promise( (resolve, reject ) => {
         getUserLocation(resolve, reject);
     });
+
+
     locationPromise.then(showDashboard).catch(showSearch); 
+}
+
+function onPlaceChanged() {
+    var place = cdAutcomplete.getPlace();    
+    console.log(place);
+}
+
+function bindUserInput() {
+    $("#" + CD_HTML.searchInput).keydown(onUserKeyDown);
+
+    cdAutcomplete = new google.maps.places.Autocomplete(
+        document.getElementById(CD_HTML.searchInput),
+        { types : ['(cities)'] }
+    );
+}
+
+function onUserKeyDown(event) {
+
+    if ( event.which === 13) {
+        event.preventDefault();
+        onSearchSubmit();
+    }
+}
+
+function onSearchSubmit() {
+    cdUserLocation.city = [ $("#" + CD_HTML.searchInput).val() ];
+    showDashboard(cdUserLocation);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -59,7 +97,8 @@ function showSearch() {
 }
 
 function showDashboard(res) {
-    $(CD_HTML.banner).fadeOut();
+    $(CD_HTML.searchContainer).hide();
+    $(CD_HTML.banner).hide();
     $(CD_HTML.navBarText).html(res.city);    
     setMapBackground();
     $(window).on('resize', setMapBackground);
@@ -67,17 +106,20 @@ function showDashboard(res) {
 }
 
 function setMapBackground() {
-    let params = {                   
-                    location : cdUserLocation.latitude + ',' + cdUserLocation.longitude,
-                    key : CD_GOOGLE_APIS.MAPS_EMBED.key
-                 }
-    let src = CD_GOOGLE_APIS.MAPS_EMBED.url + '?' + $.param(params);
-    $(CD_HTML.mapBackground).html(
-        `<iframe src="${src}" 
-                 width="${$(window).width()}" 
-                 height="${$(window).height() - $(CD_HTML.navBar).height()}" ></iframe>`
-    );
-    $(CD_HTML.mapBackground).fadeIn('slow');
+    let params = {
+        client_id : CD_UNSPLASH_API.client_id,
+        query : 'scenery'
+    }
+    $.getJSON(CD_UNSPLASH_API.url, params)
+        .then(function(res){
+            if ( res.urls) {
+                $('body').css('background-image', 'url(' + res.urls.full + ')');
+                $(CD_HTML.mapBackground).fadeIn('slow');
+            }
+        })
+        .fail(function(err) {
+
+        });
 }
 
 function showWeatherInformation(res) { 
