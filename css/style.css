@@ -1,7 +1,14 @@
 body
 {
     background-color: #fafafa ;
+    background-repeat: no-repeat;
+    background-size: cover;
     color: #000000;
+}
+
+h4
+{
+    text-shadow: 2px 2px black;
 }
 
 .cd-navbar h1
