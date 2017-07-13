@@ -40,7 +40,8 @@ const CD_HTML = {
         searchContainer : '.js-cd-search-container',
         searchInput: 'cd-search-input',
         mapBackground : 'div.js-cd-map-background',
-        contentAreaContainer : '.js-cd-content-area-container'
+        contentAreaContainer : '.js-cd-content-area-container',
+        serachForm : "#cd-search-form"
     };
 
 
@@ -66,7 +67,8 @@ function onPlaceChanged() {
 }
 
 function bindUserInput() {
-    $("#" + CD_HTML.searchInput).keydown(onUserKeyDown);
+    //$("#" + CD_HTML.searchInput).keydown(onUserKeyDown);
+    $(CD_HTML.serachForm).on('submit', onSearchSubmit);
 
     cdAutcomplete = new google.maps.places.Autocomplete(
         document.getElementById(CD_HTML.searchInput),
@@ -82,7 +84,8 @@ function onUserKeyDown(event) {
     }
 }
 
-function onSearchSubmit() {
+function onSearchSubmit(event) {
+    event.preventDefault();
     cdUserLocation.city = [ $("#" + CD_HTML.searchInput).val() ];
     showDashboard(cdUserLocation);
 }
@@ -110,6 +113,7 @@ function setMapBackground() {
         client_id : CD_UNSPLASH_API.client_id,
         query : 'scenery'
     }
+    
     $.getJSON(CD_UNSPLASH_API.url, params)
         .then(function(res){
             if ( res.urls) {
