@@ -4,10 +4,6 @@ const CD_GOOGLE_APIS = {
     GEOCODING : { 
         url : 'https://maps.googleapis.com/maps/api/geocode/json',
         key : 'AIzaSyDuOUdcwsu_byQwsFv5b6lrF3u9BBNXDJI'        
-    },
-    MAPS_EMBED : {
-        url : 'https://www.google.com/maps/embed/v1/streetview',
-        key : 'AIzaSyBmnWXOGe8XT8YMAvkIK_VxCOEfcRVyHOo'
     }
 };
 
@@ -57,17 +53,15 @@ function onReady() {
         getUserLocation(resolve, reject);
     });
 
-
     locationPromise.then(showDashboard).catch(showSearch); 
 }
 
 function onPlaceChanged() {
-    var place = cdAutcomplete.getPlace();    
-    console.log(place);
+    cdUserLocation.city = cdAutcomplete.getPlace();    
+    console.log(cdUserLocation.city);
 }
 
 function bindUserInput() {
-    //$("#" + CD_HTML.searchInput).keydown(onUserKeyDown);
     $(CD_HTML.serachForm).on('submit', onSearchSubmit);
 
     cdAutcomplete = new google.maps.places.Autocomplete(
