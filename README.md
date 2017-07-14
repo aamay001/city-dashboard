@@ -7,6 +7,9 @@ Dashboard with live info about your city.
 
 [Live Demo](https://aamay001.github.io/city-dashboard/)
 
+*You may have to enable unsafe script to load due to unsecured weather api endpoint.*
+
+
 ## Description
 This application will try to determine the user's location by using the Geolocation API. If geolocating is possible, the resulting coordinates will be used to find the user's city. After looking up the user's city using Google's Geocoding API, the user's current weather forecast for the next four days will be displayed.
 
