@@ -273,7 +273,7 @@ function getWeatherDataHTML() {
                 `<div class="col s12 m6 l6 xl3">
                     <div class="card blue lighten-4 grey-text text-darken-4">
                         <div class="card-content">
-                        <img src="https://developer.accuweather.com/sites/default/files/${item.Day.Icon}.png" alt='Icon for current weather.' style="float:right"/>
+                        <img src="https://developer.accuweather.com/sites/default/files/${item.Day.Icon}-s.png" alt='Icon for current weather.' style="float:right"/>
                         <span class="card-title">${item.Temperature.Maximum.Value}°F</span>
                         <i>${item.Day.IconPhrase}</i><br>
                         <sub><i class="fa fa-arrow-down" aria-hidden="true"></i> low: ${item.Temperature.Minimum.Value}°F <i class="fa fa-arrow-up" aria-hidden="true"></i> high: ${item.Temperature.Maximum.Value}°F</sub>
