@@ -12,6 +12,12 @@ const CD_OPEN_WEATHER_API = {
     key : 'add0c60b285e82414e6645f990831a9e'
 };
 
+const CD_ACCUWEATHER_API = {
+    citySearchUrl : 'https://dataservice.accuweather.com/locations/v1/cities/search',
+    foreCastUrl : 'https://dataservice.accuweather.com/forecasts/v1/daily/5day/',
+    key : '5vLVDKU5bTzVtFXRMHbQJ4arNfTBsb9a'
+}
+
 const CD_UNSPLASH_API = {
     url : 'https://api.unsplash.com/photos/random',
     client_id : 'a9698e9b2689360008f762c5b92efb67c9c33f9141fc65ec81571a08a80ecf30'
@@ -94,12 +100,13 @@ function showSearch() {
 }
 
 function showDashboard(res) {
+    
     $(CD_HTML.searchContainer).hide();
     $(CD_HTML.banner).hide();
-    $(CD_HTML.navBarText).html(res.city);    
+    $(CD_HTML.navBarText).html(res.city);
+    getWeather().then(showWeatherInformation).catch(showWeatherError);    
     setMapBackground();
-    $(window).on('resize', setMapBackground);
-    getWeather().then(showWeatherInformation).catch(showWeatherError);
+    $(window).on('resize', setMapBackground);    
 }
 
 function setMapBackground() {
@@ -222,20 +229,32 @@ function getWeather() {
 function getWeatherData(resolve, reject) {
     let params = {
         q : cdUserLocation.city[0],
-        units : 'imperial',
-        cnt : 4,
-        appid : CD_OPEN_WEATHER_API.key
+        apikey : CD_ACCUWEATHER_API.key
     }
 
-    $.getJSON(CD_OPEN_WEATHER_API.url, params)
-        .then( function(res) { getWeatherDataSuccess(res, resolve) })
-        .fail( function(err) { getWeatherDataError(err, reject )});
+    $.getJSON(CD_ACCUWEATHER_API.citySearchUrl, params)
+        .then( function(res, resolve, reject) { getWeatherLocationKeySuccess(res, resolve, reject) })
+        .fail( function(err, reject) { getWeatherDataError(err, reject )});
 }
 
-function getWeatherDataSuccess(res, resolve) {
-    cdUserLocation.weather = res.list;
-    console.log(`User location updated: Temp ${cdUserLocation.weather[0].temp.day}°F`);
-    resolve(cdUserLocation.weather);
+function getWeatherLocationKeySuccess(res, resolve, reject) {
+    let weatherLocationKey = res[0].Key;
+
+    let params = {
+        apikey : CD_ACCUWEATHER_API.key
+    }
+
+    $.getJSON(CD_ACCUWEATHER_API.foreCastUrl + weatherLocationKey, params )
+        .then( function(res, resolve){
+            cdUserLocation.weather = res;
+            console.log(`User location updated: Temp ${cdUserLocation.weather.DailyForecasts[0].Temperature.Maximum.Value}°F`);
+            resolve(cdUserLocation.weather);
+        })
+        .catch(function(err, reject){
+            console.log('Error getting weather forecast.');
+            console.log(err.message);
+            reject('Unable to get weather forecast.');
+        });
 }
 
 function getWeatherDataError(err, reject ) {
@@ -261,19 +280,29 @@ function getFormattedDate(dtVal) {
 function getWeatherDataHTML() {
     let phi = 'https://materializecss.com/images/sample-1.jpg';
     let element = $('<div class="row"></div>');
+    let count = 0;
     cdUserLocation.weather.map(
         function(item){
+
+            if ( count < 4)
+                count++;
+            else 
+                return '';
+
+            if ( item.Day.Icon <= 9 )
+                irem.Day.Icon = '0' + item.Day.Icon.toString();
+
             element.append(
                 `<div class="col s12 m6 l6 xl3">
                     <div class="card blue lighten-4 grey-text text-darken-4">
                         <div class="card-content">
-                        <img src="https://openweathermap.org/img/w/${item.weather[0].icon}.png" alt='Icon for current weather.' style="float:right"/>
-                        <span class="card-title">${item.temp.day}°F</span>
-                        <i>${item.weather[0].description}</i><br>
-                        <sub><i class="fa fa-arrow-down" aria-hidden="true"></i> low: ${item.temp.min}°F <i class="fa fa-arrow-up" aria-hidden="true"></i> high: ${item.temp.max}°F</sub>
+                        <img src="https://developer.accuweather.com/sites/default/files/${item.Day.Icon}.png" alt='Icon for current weather.' style="float:right"/>
+                        <span class="card-title">${item.Temperature.Maximum.Value}°F</span>
+                        <i>${item.Day.IconPhrase}</i><br>
+                        <sub><i class="fa fa-arrow-down" aria-hidden="true"></i> low: ${item.Temperature.Minimum.Value}°F <i class="fa fa-arrow-up" aria-hidden="true"></i> high: ${item.Temperature.Maximum.Value}°F</sub>
                         </div>
                         <div class="card-action grey lighten-5">
-                            ${getFormattedDate(item.dt)}
+                            ${getFormattedDate(item.EpochDate)}
                         </div>
                     </div>
                 </div>`
