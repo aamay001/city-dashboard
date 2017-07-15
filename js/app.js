@@ -29,7 +29,6 @@ var cdUserLocation = {
         background : undefined
     };
 
-
 const CD_HTML = {
         navBar : '.js-cd-navbar',
         navBarText : '.js-cd-navbar h1',
@@ -43,15 +42,12 @@ const CD_HTML = {
         serachForm : "#cd-search-form"
     };
 
-
 $(onReady);
 
 function onReady() {
 
     bindUserInput();    
-
     cdAutcomplete.addListener('place_changed', onPlaceChanged);
-
     getUserLocation();
 }
 
@@ -67,14 +63,6 @@ function bindUserInput() {
         document.getElementById(CD_HTML.searchInput),
         { types : ['(cities)'] }
     );
-}
-
-function onUserKeyDown(event) {
-
-    if ( event.which === 13) {
-        event.preventDefault();
-        onSearchSubmit();
-    }
 }
 
 function onSearchSubmit(event) {
