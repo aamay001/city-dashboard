@@ -9,11 +9,6 @@ const CD_GOOGLE_APIS = {
     }
 };
 
-const CD_OPEN_WEATHER_API = {
-    url : 'http://api.openweathermap.org/data/2.5/forecast/daily',
-    key : 'add0c60b285e82414e6645f990831a9e'
-};
-
 const CD_ACCUWEATHER_API = {
     citySearchUrl : 'https://dataservice.accuweather.com/locations/v1/cities/search',
     foreCastUrl : 'https://dataservice.accuweather.com/forecasts/v1/daily/5day/',
@@ -229,8 +224,11 @@ function getWeatherLocationKeySuccess(res) {
 
     $.getJSON(CD_ACCUWEATHER_API.foreCastUrl + weatherLocationKey, params )
         .then( function(res){
-            cdUserLocation.weather = res;
-            console.log(`User location updated: Temp ${cdUserLocation.weather.DailyForecasts[0].Temperature.Maximum.Value}°F`);
+
+            cdUserLocation.weather = res.DailyForecasts;
+            cdUserLocation.weather.pop();
+            console.log(cdUserLocation.weather);
+            console.log(`User location updated: Temp ${cdUserLocation.weather[0].Temperature.Maximum.Value}°F`);
             showWeatherInformation();
         })
         .catch(function(err){
@@ -258,16 +256,10 @@ function getWeatherDataHTML() {
     let element = $('<div class="row"></div>');
     let count = 0;
     console.log(cdUserLocation.weather);
-    cdUserLocation.weather.DailyForecasts.map(
+    cdUserLocation.weather.map(
         function(item){
 
-            if ( count < 4)
-                count++;
-            else 
-                return '';
-
-            if ( item.Day.Icon <= 9 )
-                item.Day.Icon = '0' + item.Day.Icon.toString();
+            item.Day.Icon = item.Day.Icon <= 9 ? '0' + item.Day.Icon : item.Day.Icon;
 
             element.append(
                 `<div class="col s12 m6 l6 xl3">
