@@ -8,9 +8,9 @@ const CD_GOOGLE_APIS = {
 };
 
 const CD_ACCUWEATHER_API = {
-    citySearchUrl : 'https://dataservice.accuweather.com/locations/v1/cities/search',
+    citySearchUrl : 'https://dataservice.accuweather.com/locations/v1/geoposition/search',
     foreCastUrl : 'https://dataservice.accuweather.com/forecasts/v1/daily/5day/',
-    key : '5vLVDKU5bTzVtFXRMHbQJ4arNfTBsb9a'
+    key : 'sht8roAGjvkU8ZNSwqdTkYyWMUUL7Nnd'
 }
 
 const CD_UNSPLASH_API = {
@@ -22,9 +22,7 @@ var cdAutcomplete = {};
 var cdUserLocation = {
         longitude : undefined,
         latitude : undefined,
-        city : undefined,
-        weather : undefined,
-        background : undefined
+        city : undefined, 
     };
 
 const CD_HTML = {
@@ -37,26 +35,32 @@ const CD_HTML = {
         searchInput: 'cd-search-input',
         mapBackground : 'div.js-cd-map-background',
         contentAreaContainer : '.js-cd-content-area-container',
-        serachForm : "#cd-search-form"
+        serachForm : "#cd-search-form",
+        loader: '.js-cd-loader',
+        photoAttrib : '.js-cd-photo-attribution'
     };
 
 $(onReady);
 
 function onReady() {
-
     bindUserInput();    
     cdAutcomplete.addListener('place_changed', onPlaceChanged);
     getUserLocation();
 }
 
 function onPlaceChanged() {
-    cdUserLocation.city = cdAutcomplete.getPlace();    
-    console.log(cdUserLocation.city);
+    $('#' + CD_HTML.searchInput).removeClass('invalid');
+    cdUserLocation.city = cdAutcomplete.getPlace();
+    
+    cdUserLocation.latitude = cdUserLocation.city.geometry.location.lat();
+    cdUserLocation.longitude = cdUserLocation.city.geometry.location.lng();  
+
+    console.log(cdUserLocation);
+    processSelection();
 }
 
 function bindUserInput() {
     $(CD_HTML.serachForm).on('submit', onSearchSubmit);
-
     cdAutcomplete = new google.maps.places.Autocomplete(
         document.getElementById(CD_HTML.searchInput),
         { types : ['(cities)'] }
@@ -64,31 +68,45 @@ function bindUserInput() {
 }
 
 function onSearchSubmit(event) {
-    event.preventDefault();
-    cdUserLocation.city = [ $("#" + CD_HTML.searchInput).val() ];
-    showDashboard(cdUserLocation);
+    // Prevent default only if user hit the 
+    // enter key/submit the form and do nothing.
+    if(event) {
+        event.preventDefault();
+        return;
+    }    
+}
+
+function processSelection(){    
+    $(CD_HTML.loader).show();    
+    if (cdUserLocation.city.id) {
+        cdUserLocation.city = [ $("#" + CD_HTML.searchInput).val() ];
+        showDashboard(cdUserLocation);
+    } else {
+        console.log('Bad input.');
+        $('#' + CD_HTML.searchInput).addClass('invalid');
+        $(CD_HTML.loader).hide(); 
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // DOM Manip
 ///////////////////////////////////////////////////////////////////////////////
 function showSearch() {
+    $(CD_HTML.photoAttrib).hide();
+    $(CD_HTML.loader).hide();
     $(CD_HTML.bannerSubtext).hide();
-    $(CD_HTML.bannerHeader).text("Enter your city's name.")
+    $(CD_HTML.bannerHeader).text("Select your city from the list.")
     $(CD_HTML.searchContainer).fadeIn('slow');
 }
 
-function showDashboard() {
-    
+function showDashboard() {      
     $(CD_HTML.searchContainer).hide();
     $(CD_HTML.banner).hide();
     $(CD_HTML.navBarText).html(cdUserLocation.city);
-    getWeatherData(); 
-    setMapBackground();
-    $(window).on('resize', setMapBackground);    
+    getWeatherData();    
 }
 
-function setMapBackground() {
+function setBackground() {
     let params = {
         client_id : CD_UNSPLASH_API.client_id,
         query : 'scenery'
@@ -96,19 +114,22 @@ function setMapBackground() {
     
     $.getJSON(CD_UNSPLASH_API.url, params)
         .then(function(res){
-            if ( res.urls) {
+            if (res.urls) {
                 cdUserLocation.background = res.urls.full;
-                $('body').css('background-image', 'url(' + res.urls.full + ')');
+                $('body').css('background-image', 'url(' + res.urls.regular + ')');
+                $(CD_HTML.photoAttrib).html(`Photo by <a target="_blank" href="${res.user.links.html}">${res.user.name}</a> / <a target="_blank" href="https://unsplash.com">Unsplash</a>`);
+                $(CD_HTML.photoAttrib).show();
                 $(CD_HTML.mapBackground).fadeIn('slow');
             }
         })
-        .fail(function(err) {
+        .catch(function(err) {
             console.log(err);
         });        
 }
 
 function showWeatherInformation(res) { 
     let weatherDataHTML = getWeatherDataHTML();
+    $(CD_HTML.loader).hide();  
     $(CD_HTML.contentAreaContainer).append(`
             <div class="row">
                 <div class="col s12 m8 l6">
@@ -123,6 +144,7 @@ function showWeatherInformation(res) {
 function showWeatherError(err) {
     console.log('Error getting weather.');
     console.log(err.message);
+    showSearch();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -138,12 +160,13 @@ function getUserLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition( getUserLocality, handleError, geolocationOps);        
     } else {
-        // use form to have user enter location
+        // use form to have user enter location        
         showSearch();
     }
 }
 
 function getUserLocality(position) {
+    $(CD_HTML.loader).show();
     cdUserLocation.longitude = position.coords.longitude;
     cdUserLocation.latitude = position.coords.latitude;    
 
@@ -153,8 +176,7 @@ function getUserLocality(position) {
                  }
     $.getJSON(CD_GOOGLE_APIS.GEOCODING.url, params)
         .then(function(res){
-            console.log(res);
-            if ( res.results)    {
+            if (res.results)    {
                 let cities = res.results.map(
                     function(item) {
                         if ( item.formatted_address && "locality" === item.types[0] )
@@ -165,21 +187,23 @@ function getUserLocality(position) {
                     });
 
                 cdUserLocation.city = cities[0];    
-                console.log(cdUserLocation);
                 console.log( `User location updated: ${cdUserLocation.city}` );
                 showDashboard();                
 
             } else {
                 console.log('User locality could not be determined.');
+                showSearch();
             }
+        })
+        .catch(function(err){
+            console.log(err);
+            showSearch();
         });
 }
 
 function handleError(err){
     console.log(err);
-
-    if ( err.code === 1)
-        showSearch();
+    showSearch();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -187,7 +211,7 @@ function handleError(err){
 ///////////////////////////////////////////////////////////////////////////////
 function getWeatherData() {
     let params = {
-        q : cdUserLocation.city,
+        q : `${cdUserLocation.latitude},${cdUserLocation.longitude}`,
         apikey : CD_ACCUWEATHER_API.key
     }
 
@@ -197,25 +221,32 @@ function getWeatherData() {
 }
 
 function getWeatherLocationKeySuccess(res) {
-    let weatherLocationKey = res[0].Key;
 
-    let params = {
-        apikey : CD_ACCUWEATHER_API.key
-    }
+    if(res[0]){
+        let weatherLocationKey = res[0].Key;
 
-    $.getJSON(CD_ACCUWEATHER_API.foreCastUrl + weatherLocationKey, params )
-        .then( function(res){
+        let params = {
+            apikey : CD_ACCUWEATHER_API.key
+        }
 
-            cdUserLocation.weather = res.DailyForecasts;
-            cdUserLocation.weather.pop();
-            console.log(cdUserLocation.weather);
-            console.log(`User location updated: Temp ${cdUserLocation.weather[0].Temperature.Maximum.Value}°F`);
-            showWeatherInformation();
-        })
-        .catch(function(err){
-            console.log('Error getting weather forecast.');
-            console.log(err.message);
-        });
+        $.getJSON(CD_ACCUWEATHER_API.foreCastUrl + weatherLocationKey, params )
+            .then( function(res){
+
+                cdUserLocation.weather = res.DailyForecasts;
+                cdUserLocation.weather.pop();
+                console.log(`User location updated: Temp ${cdUserLocation.weather[0].Temperature.Maximum.Value}°F`);
+                showWeatherInformation();
+            })
+            .catch(function(err){
+                console.log('Error getting weather forecast.');
+                console.log(err.message);
+                $(CD_HTML.photoAttrib).hide();
+                showSearch();
+            });
+    } else {
+        handleError("Error getting weather location key.");
+        alert('There was an error while getting your data. Please try again.');
+    }    
 }
 
 function getFormattedDate(dtVal) {
@@ -236,7 +267,6 @@ function getWeatherDataHTML() {
     let phi = 'https://materializecss.com/images/sample-1.jpg';
     let element = $('<div class="row"></div>');
     let count = 0;
-    console.log(cdUserLocation.weather);
     cdUserLocation.weather.map(
         function(item){
 
@@ -259,5 +289,7 @@ function getWeatherDataHTML() {
             )
         }
     );
+
+    setBackground();
     return element;
 }

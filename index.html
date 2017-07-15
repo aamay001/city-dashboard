@@ -34,9 +34,6 @@
                 </span>
             </nav>
         </div>
-        
-        <div class="cd-map-background js-cd-map-background" >
-        </div>
 
         <div class="container cd-main-content">
             <section>
@@ -52,12 +49,29 @@
                     <div class="input-field col s12">
                         <form id="cd-search-form" > 
                             <i class="material-icons prefix">search</i>
-                            <input type="text" id="cd-search-input" name="cd-search-input" class="autocomplete" placeholder="enter city name here" required>
+                            <input type="text" id="cd-search-input" name="cd-search-input" class="autocomplete" placeholder="start typing city name and select from list" required>
                             <label for="cd-search-input">City</label>
                         </form>
                     </div>
                 </div>
-            </section>              
+                <div class="js-cd-loader cd-loader">
+                    <em>getting your city's data...</em>
+                    <div class="preloader-wrapper big active">                    
+                        <div class="spinner-layer spinner-blue-only">
+                            <div class="circle-clipper left">
+                                <div class="circle"></div>
+                            </div>
+                            <div class="gap-patch">
+                                <div class="circle"></div>
+                            </div><div class="circle-clipper right">
+                                <div class="circle"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+                   
         </div>    
     </body>
+    <div class="cd-photo-attribution js-cd-photo-attribution">Photo by Andy Amaya / Unsplash</div>
 </html>
