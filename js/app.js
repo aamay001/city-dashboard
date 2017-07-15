@@ -1,5 +1,7 @@
 'use strict';
 
+var backgroundUrl = 'https://images.unsplash.com/photo-1417163434503-8b20d5adfe36?ixlib=rb-0.3.5&q=85&fm=jpg&crop=entropy&cs=srgb&s=cc4b332e282f44b9a0995ea2fa33cf7f'
+
 const CD_GOOGLE_APIS = {
     GEOCODING : { 
         url : 'https://maps.googleapis.com/maps/api/geocode/json',
@@ -20,7 +22,7 @@ const CD_ACCUWEATHER_API = {
 
 const CD_UNSPLASH_API = {
     url : 'https://api.unsplash.com/photos/random',
-    client_id : 'a9698e9b2689360008f762c5b92efb67c9c33f9141fc65ec81571a08a80ecf30'
+    client_id : '4cfdde8d5a5a196a85132329084298f8ff30334826ae24b7f0d38a6d5397e238'
 }
 
 var cdAutcomplete = {};
@@ -95,12 +97,12 @@ function showSearch() {
     $(CD_HTML.searchContainer).fadeIn('slow');
 }
 
-function showDashboard(res) {
+function showDashboard() {
     
     $(CD_HTML.searchContainer).hide();
     $(CD_HTML.banner).hide();
-    $(CD_HTML.navBarText).html(res.city);
-    getWeather().then(showWeatherInformation).catch(showWeatherError);    
+    $(CD_HTML.navBarText).html(cdUserLocation.city);
+    getWeatherData(); 
     setMapBackground();
     $(window).on('resize', setMapBackground);    
 }
@@ -111,9 +113,11 @@ function setMapBackground() {
         query : 'scenery'
     }
     
+    /*
     $.getJSON(CD_UNSPLASH_API.url, params)
         .then(function(res){
             if ( res.urls) {
+                cdUserLocation.background = res.urls.full;
                 $('body').css('background-image', 'url(' + res.urls.full + ')');
                 $(CD_HTML.mapBackground).fadeIn('slow');
             }
@@ -121,6 +125,10 @@ function setMapBackground() {
         .fail(function(err) {
 
         });
+        */
+
+    $('body').css('background-image', 'url(' + backgroundUrl + ')');
+    $(CD_HTML.mapBackground).fadeIn('slow');
 }
 
 function showWeatherInformation(res) { 
@@ -179,9 +187,12 @@ function getUserLocality(position) {
                     function(item) { 
                         if ( item ) return item;
                     });
-                
-                cdUserLocation.city = cities;    
+
+                cdUserLocation.city = cities[0];    
+                console.log(cdUserLocation);
                 console.log( `User location updated: ${cdUserLocation.city}` );
+                showDashboard();                
+
             } else {
                 console.log('User locality could not be determined.');
             }
@@ -198,26 +209,18 @@ function handleError(err){
 ///////////////////////////////////////////////////////////////////////////////
 // Weather
 ///////////////////////////////////////////////////////////////////////////////
-function getWeather() {
-    let weather = new Promise( (resolve, reject) =>
-        getWeatherData(resolve, reject) 
-    );
-
-    return weather;
-}
-
-function getWeatherData(resolve, reject) {
+function getWeatherData() {
     let params = {
-        q : cdUserLocation.city[0],
+        q : cdUserLocation.city,
         apikey : CD_ACCUWEATHER_API.key
     }
 
     $.getJSON(CD_ACCUWEATHER_API.citySearchUrl, params)
-        .then( function(res, resolve, reject) { getWeatherLocationKeySuccess(res, resolve, reject) })
-        .fail( function(err, reject) { getWeatherDataError(err, reject )});
+        .then( getWeatherLocationKeySuccess )
+        .catch( handleError );
 }
 
-function getWeatherLocationKeySuccess(res, resolve, reject) {
+function getWeatherLocationKeySuccess(res) {
     let weatherLocationKey = res[0].Key;
 
     let params = {
@@ -225,22 +228,15 @@ function getWeatherLocationKeySuccess(res, resolve, reject) {
     }
 
     $.getJSON(CD_ACCUWEATHER_API.foreCastUrl + weatherLocationKey, params )
-        .then( function(res, resolve){
+        .then( function(res){
             cdUserLocation.weather = res;
             console.log(`User location updated: Temp ${cdUserLocation.weather.DailyForecasts[0].Temperature.Maximum.Value}°F`);
-            resolve(cdUserLocation.weather);
+            showWeatherInformation();
         })
-        .catch(function(err, reject){
+        .catch(function(err){
             console.log('Error getting weather forecast.');
             console.log(err.message);
-            reject('Unable to get weather forecast.');
         });
-}
-
-function getWeatherDataError(err, reject ) {
-    console.log('Error talking to OpenWeather.');
-    console.log(err.message);
-    reject('Unable to get weather data.');
 }
 
 function getFormattedDate(dtVal) {
@@ -261,7 +257,8 @@ function getWeatherDataHTML() {
     let phi = 'https://materializecss.com/images/sample-1.jpg';
     let element = $('<div class="row"></div>');
     let count = 0;
-    cdUserLocation.weather.map(
+    console.log(cdUserLocation.weather);
+    cdUserLocation.weather.DailyForecasts.map(
         function(item){
 
             if ( count < 4)
@@ -270,7 +267,7 @@ function getWeatherDataHTML() {
                 return '';
 
             if ( item.Day.Icon <= 9 )
-                irem.Day.Icon = '0' + item.Day.Icon.toString();
+                item.Day.Icon = '0' + item.Day.Icon.toString();
 
             element.append(
                 `<div class="col s12 m6 l6 xl3">
