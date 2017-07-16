@@ -10,7 +10,7 @@ const CD_GOOGLE_APIS = {
 const CD_ACCUWEATHER_API = {
     citySearchUrl : 'https://dataservice.accuweather.com/locations/v1/geoposition/search',
     foreCastUrl : 'https://dataservice.accuweather.com/forecasts/v1/daily/5day/',
-    key : 'sht8roAGjvkU8ZNSwqdTkYyWMUUL7Nnd'
+    key : 'SGg4PQd6kiREfxSUc41GDxPlHS5It0oY'
 }
 
 const CD_UNSPLASH_API = {
