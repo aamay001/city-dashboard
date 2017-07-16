@@ -59,7 +59,8 @@ function onPlaceChanged() {
         processSelection();
     }
     else {
-        handleError('Bad input.')
+        handleError('Bad input.');
+        $('#' + CD_HTML.searchInput).addClass('invalid');
     }
 }
 
