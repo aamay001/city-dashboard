@@ -52,11 +52,15 @@ function onPlaceChanged() {
     $('#' + CD_HTML.searchInput).removeClass('invalid');
     cdUserLocation.city = cdAutcomplete.getPlace();
     
-    cdUserLocation.latitude = cdUserLocation.city.geometry.location.lat();
-    cdUserLocation.longitude = cdUserLocation.city.geometry.location.lng();  
-
-    console.log(cdUserLocation);
-    processSelection();
+    if ( cdUserLocation.latitude ) {
+        cdUserLocation.latitude = cdUserLocation.city.geometry.location.lat();
+        cdUserLocation.longitude = cdUserLocation.city.geometry.location.lng();
+        console.log(cdUserLocation);
+        processSelection();
+    }
+    else {
+        handleError('Bad input.')
+    }
 }
 
 function bindUserInput() {
