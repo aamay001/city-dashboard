@@ -52,7 +52,7 @@ function onPlaceChanged() {
     $('#' + CD_HTML.searchInput).removeClass('invalid');
     cdUserLocation.city = cdAutcomplete.getPlace();
     
-    if ( cdUserLocation.latitude ) {
+    if ( cdUserLocation.city.geometry ) {
         cdUserLocation.latitude = cdUserLocation.city.geometry.location.lat();
         cdUserLocation.longitude = cdUserLocation.city.geometry.location.lng();
         console.log(cdUserLocation);
