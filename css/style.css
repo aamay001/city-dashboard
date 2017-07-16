@@ -1,3 +1,8 @@
+html
+{
+    min-width: 320px;
+}
+
 body
 {
     background-color: #fafafa ;
@@ -64,7 +69,8 @@ h4
     color: lightgray;
     display:none;
     color: lightgray;
-    text-shadow: 2px 2px black;
+    text-shadow: 1px 1px black;
+    z-index: -1;
 }
 
 .cd-photo-attribution a
@@ -83,4 +89,21 @@ h4
 }
 #cd-search-input:-moz-placeholder { /* Firefox 18- */
   color: black;
+}
+
+.card-title
+{
+    font-size: 31px !important;
+}
+
+.card br
+{
+    line-height: 1.0 !important;
+}
+
+.card i
+{
+    overflow: hidden;
+    text-overflow : ellipsis;
+    white-space: nowrap;
 }
