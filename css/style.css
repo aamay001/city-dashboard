@@ -107,3 +107,8 @@ h4
     text-overflow : ellipsis;
     white-space: nowrap;
 }
+
+.card
+{
+    opacity : .90;
+}
