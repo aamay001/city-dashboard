@@ -147,7 +147,7 @@ function showLocalFood() {
     $(CD_HTML.contentAreaContainer).append(localFoodHtml);
     let mapCenter = { lat : cdUserLocation.latitude, lng : cdUserLocation.longitude };
     let foodMap = new google.maps.Map(document.getElementById('cd-localfood-map'), {
-                                                                                zoom : 15, 
+                                                                                zoom : 13, 
                                                                                 center : mapCenter 
                                                                             });
     let foodRequest = {
