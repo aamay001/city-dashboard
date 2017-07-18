@@ -112,3 +112,8 @@ h4
 {
     opacity : .90;
 }
+
+#cd-localfood-map {
+    height: 400px;
+    width: 100%;
+}

@@ -33,11 +33,12 @@ const CD_HTML = {
         bannerSubtext : '.js-cd-main-header em',
         searchContainer : '.js-cd-search-container',
         searchInput: 'cd-search-input',
-        mapBackground : 'div.js-cd-map-background',
         contentAreaContainer : '.js-cd-content-area-container',
         serachForm : "#cd-search-form",
         loader: '.js-cd-loader',
-        photoAttrib : '.js-cd-photo-attribution'
+        photoAttrib : '.js-cd-photo-attribution',
+        locaFoodMap : '#cd-localfood-map'
+
     };
 
 $(onReady);
@@ -108,7 +109,7 @@ function showDashboard() {
     $(CD_HTML.searchContainer).hide();
     $(CD_HTML.banner).hide();
     $(CD_HTML.navBarText).html(cdUserLocation.city);
-    getWeatherData();    
+    getWeatherData();
 }
 
 function setBackground() {
@@ -135,21 +136,64 @@ function setBackground() {
 function showWeatherInformation(res) { 
     let weatherDataHTML = getWeatherDataHTML();
     $(CD_HTML.loader).hide();  
+    addHeaderRow("Weather Forecast");
+    $(CD_HTML.contentAreaContainer).append(weatherDataHTML);
+}
+
+function showLocalFood() {
+    let mapInfoWindows = [];    
+    let localFoodHtml = getLocalFood();
+    addHeaderRow("Local Restaurants");
+    $(CD_HTML.contentAreaContainer).append(localFoodHtml);
+    let mapCenter = { lat : cdUserLocation.latitude, lng : cdUserLocation.longitude };
+    let foodMap = new google.maps.Map(document.getElementById('cd-localfood-map'), {
+                                                                                zoom : 15, 
+                                                                                center : mapCenter 
+                                                                            });
+    let foodRequest = {
+        location : mapCenter,
+        radius: '500',
+        query : 'restaurant'
+    };
+
+    let service = new google.maps.places.PlacesService(foodMap);
+    service.textSearch(foodRequest, function(results, status){
+        if (status == google.maps.places.PlacesServiceStatus.OK) {
+            for (let i = 0; i < results.length; i++) {
+                let place = results[i];
+                console.log(place);
+                let infoWindowContent = `<h6>${place.name}</h6>`;
+                let infoWindow = new google.maps.InfoWindow({
+                    content : infoWindowContent
+                }); 
+                let marker = new google.maps.Marker({
+                    map: foodMap,
+                    position : place.geometry.location,
+                    animation: google.maps.Animation.DROP,
+                    icon : place.icon
+                });
+                mapInfoWindows.push(infoWindow);
+                marker.addListener('click', function() { 
+                    infoWindow.open(foodMap, marker);
+                    mapInfoWindows.forEach(function(item){
+                        if ( item != infoWindow )
+                            item.close();
+                    })
+                });
+            }
+        }
+    });
+}
+
+function addHeaderRow(headerText){
     $(CD_HTML.contentAreaContainer).append(`
             <div class="row">
                 <div class="col s12 m8 l6">
                     <div class="card-content grey-text text-lighten-5">
-                        <h4>Weather Forecast</h4>
+                        <h4>${headerText}</h4>
                     </div>                  
                 </div>
             </div>`);
-    $(CD_HTML.contentAreaContainer).append(weatherDataHTML);
-}
-
-function showWeatherError(err) {
-    console.log('Error getting weather.');
-    console.log(err.message);
-    showSearch();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -181,7 +225,7 @@ function getUserLocality(position) {
                  }
     $.getJSON(CD_GOOGLE_APIS.GEOCODING.url, params)
         .then(function(res){
-            if (res.results)    {
+            if (res.results) {
                 let cities = res.results.map(
                     function(item) {
                         if ( item.formatted_address && "locality" === item.types[0] )
@@ -241,16 +285,17 @@ function getWeatherLocationKeySuccess(res) {
                 cdUserLocation.weather.pop();
                 console.log(`User location updated: Temp ${cdUserLocation.weather[0].Temperature.Maximum.Value}°F`);
                 showWeatherInformation();
+                showLocalFood();
             })
             .catch(function(err){
                 console.log('Error getting weather forecast.');
                 console.log(err.message);
                 $(CD_HTML.photoAttrib).hide();
-                showSearch();
+                alert('There was an error getting weather data. Sorry!');
             });
     } else {
         handleError("Error getting weather location key.");
-        alert('There was an error while getting your data. Please try again.');
+        alert('There was an error while getting weather data. Sorry!');
     }    
 }
 
@@ -296,5 +341,32 @@ function getWeatherDataHTML() {
     );
 
     setBackground();
+    return element;
+}
+
+function showWeatherError(err) {
+    console.log('Error getting weather.');
+    console.log(err.message);
+    showSearch();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Local Restaurants
+///////////////////////////////////////////////////////////////////////////////
+function getLocalFood() {        
+    let element = $('<div class="row"></div>');
+    element.append(
+        `<div class="col s12 m12 l12 xl12">
+                    <div class="card grey-text text-darken-4">
+                        <div class="card-content">
+                            <div id="cd-localfood-map"></div>
+                        </div>
+                        <div class="card-action grey lighten-5">
+                            Restuarants in ${cdUserLocation.city}
+                        </div>
+                    </div>
+                </div>`
+    );
+
     return element;
 }
