@@ -13,9 +13,9 @@ Dashboard with live info about your city.
 ## Description
 This application will try to determine the user's location by using the Geolocation API. If geolocating is possible, the resulting coordinates will be used to find the user's city. After looking up the user's city using Google's Geocoding API, the user's current weather forecast for the next four days will be displayed.
 
-If geolocating is not possible, the user will be allowed to enter his/her city name. Google's Places Autocomplete API will assist the application by suggesting accurate city names to the user. After the user submits his/her city name, the wetaher forecast will be displayed. 
+If geolocating is not possible, the user will be allowed to enter his/her city name. Google's Places Autocomplete API will assist the application by suggesting accurate city names to the user. After the user submits his/her city name, the weather forecast will be displayed. 
 
-Additionally, a random image will be set as the backgroun of the page.
+Additionally, a random image will be set as the background of the page.
 
 ## Technologies 
 HTML5, CSS, JavaScript
