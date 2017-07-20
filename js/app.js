@@ -10,13 +10,19 @@ const CD_GOOGLE_APIS = {
 const CD_ACCUWEATHER_API = {
     citySearchUrl : 'https://dataservice.accuweather.com/locations/v1/geoposition/search',
     foreCastUrl : 'https://dataservice.accuweather.com/forecasts/v1/daily/5day/',
-    key : '01zCxiAf9SpMGvOre4YLCxWZYETwl6XA'
-}
+    key : 'kyIAyPHx697TIyvEGzTEBDkO1e107PQX'
+};
 
 const CD_UNSPLASH_API = {
     url : 'https://api.unsplash.com/photos/random',
     client_id : '4cfdde8d5a5a196a85132329084298f8ff30334826ae24b7f0d38a6d5397e238'
-}
+};
+
+const CD_FOURSQAURE_API = {
+    url : 'https://api.foursquare.com/v2/venues/search',
+    client_id : 'SVUR45DN1FM4CM2PWZEJKX01VVBDTTP1B231WHQKTFJIL2B1',
+    client_secret : 'JKLV2WDLXYM3EFWLZYZO512U0QGY31VDZ0DCRLZ05XO3D4WB'
+};
 
 var cdAutcomplete = {};
 var cdUserLocation = {
@@ -191,6 +197,7 @@ function showLocalFood() {
             }
         }
     });
+    showLocalTodo();
 }
 
 function addHeaderRow(headerText){
@@ -202,6 +209,11 @@ function addHeaderRow(headerText){
                     </div>                  
                 </div>
             </div>`);
+}
+
+function showLocalTodo(){
+    addHeaderRow("Things To Do");
+    $(CD_HTML.contentAreaContainer).append(getThingsToDo());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -327,12 +339,10 @@ function getWeatherDataHTML() {
     let count = 0;
     cdUserLocation.weather.map(
         function(item){
-
             item.Day.Icon = item.Day.Icon <= 9 ? '0' + item.Day.Icon : item.Day.Icon;
-
             element.append(
                 `<div class="col s12 m6 l6 xl3">
-                    <div class="card blue lighten-4 grey-text text-darken-4">
+                    <div class="card blue lighten-4 grey-text text-darken-4 z-depth-4">
                         <div class="card-content">
                         <img src="https://developer.accuweather.com/sites/default/files/${item.Day.Icon}-s.png" alt='Icon for current weather.' style="float:right"/>
                         <span class="card-title">${item.Temperature.Maximum.Value}°F</span><br>
@@ -365,7 +375,7 @@ function getLocalFood() {
     let element = $('<div class="row"></div>');
     element.append(
         `<div class="col s12 m12 l12 xl12">
-                    <div class="card grey-text text-darken-4">
+                    <div class="card grey-text text-darken-4 z-depth-4">
                         <div class="card-content">
                             <div id="cd-localfood-map"></div>
                         </div>
@@ -377,4 +387,74 @@ function getLocalFood() {
     );
 
     return element;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Things To Do
+///////////////////////////////////////////////////////////////////////////////
+function getThingsToDo(){
+    let params = {
+        client_id : CD_FOURSQAURE_API.client_id,
+        client_secret : CD_FOURSQAURE_API.client_secret,
+        ll : cdUserLocation.latitude + ',' + cdUserLocation.longitude,
+        categoryId : '4bf58dd8d48988d1f1931735' ,
+        limit : 4,
+        v : 20170701
+    }
+
+    let element = $('<div class="row" id="cd-things-todo"</div>');
+    $.getJSON(CD_FOURSQAURE_API.url, params)
+        .then(function(res){
+            let images = [];
+            if ( res.meta.code == 200 ) {                
+                let todo = res.response.venues;                                
+                todo.map(function(item){                    
+                    images.push(item.categories[0] ? item.categories[0].shortName.split(' ')[0] : item.name.split(' ')[0]);
+                    element.append(
+                    `<div class="col s12 m6 l6 xl3">
+                        <div class="card z-depth-4">
+                            <div class="card-image blue lighten-2">
+                                <img id="${images[images.length-1]}">
+                                <span class="card-title">${ item.name }</span>
+                            </div>
+                            <div class="card-content">
+                                <p>${item.location.formattedAddress[0]}<br>
+                                ${ item.location.formattedAddress[1] ? item.location.formattedAddress[1] : ''}<br>
+                                </p>
+                            </div>
+                            <div class="card-action">
+                                <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=${item.location.address}">Get Directions</a>
+                            </div>
+                        </div>
+                    </div>`);                    
+                });
+            }
+
+            getTodoImages(images);
+        })
+        .catch(function(err){
+            handleError(err.message);
+        });
+
+    return element;
+}
+
+function getTodoImages(images){        
+    images.map(function(item){
+        let params = {
+            url: CD_UNSPLASH_API.url,
+            client_id : CD_UNSPLASH_API.client_id,
+            query : item
+        }
+        
+        $.getJSON(CD_UNSPLASH_API.url, params)
+            .then(function(res){            
+                if (res.urls) {
+                    $("#"+item).attr('src', res.urls.regular);
+                }
+            })
+            .catch(function(err) {
+                console.log(err);
+            })
+    }) 
 }
