@@ -1,77 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>City Dashboard</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="A simple dashboard of your city in material design." >
-        
-        <!-- CSS -->
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" />
-        <link href="css/style.css" rel="stylesheet" type="text/css">
-        <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBACAAAAAACwAAAAFgAAACgAAAAQAAAAIAAA\
-                                             AAEAAQAAAAAAQAAAAAAAAAAAAAAAAgAAAAAAAAAwLy0AAAAAAGrWAABq1gAAatYAAGrWAABqFgA\
-                                             Aa1YAAAtWAAC4VgAAu9AAALvbAACT2wAA18MAAMf/AADv/wAA7/8AAP//AABq1gAAatYAAGrWAAB\
-                                             q1gAAahYAAGtWAAALVgAAuFYAALvQAAC72wAAk9sAANfDAADH/wAA7/8AAO//AAD//wAA" />
 
-        <!-- JS -->
-        <script src="https://code.jquery.com/jquery-3.2.1.min.js"
-                integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-                crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js"></script>
-        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCNSJjVH5xyeBcAtSzukehY2BOuvUuoz_k&libraries=places"></script>
-        <!-- Url from Unsplash for local development -->
-        <script src="js/apiData.js"></script>
-        <script src="js/app.js" type="text/javascript"></script>
-    </head>
-    <body>
-        <div class="navbar-fixed"> <!-- Per Materialize Docs-->
-            <nav class="cd-navbar js-cd-navbar indigo darken-2" role="navigation">                    
-                <span class="brand-logo center white-text">
+<head>
+    <title>City Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A simple dashboard of your city in material design.">
+
+    <!-- CSS -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" />
+    <link href="css/style.css" rel="stylesheet" type="text/css">
+    <link href="/assets/favicon.ico" rel="icon" type="image/x-icon" />
+
+    <!-- JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCNSJjVH5xyeBcAtSzukehY2BOuvUuoz_k&libraries=places"></script>
+    <!-- Url from Unsplash for local development -->
+    <script src="js/apiData.js"></script>
+    <script src="js/app.js" type="text/javascript"></script>
+</head>
+
+<body>
+    <div class="navbar-fixed">
+        <!-- Per Materialize Docs-->
+        <nav class="cd-navbar js-cd-navbar blue" role="navigation">
+            <img src="/assets/logo.png" alt="The City Dashboard logo." class="cd-logo-image" />
+            <span class="brand-logo center white-text">                    
                     <h1>City Dashboard</h1>
-                </span>
-            </nav>
-        </div>
+            </span>
+        </nav>
+    </div>
 
-        <div class="container cd-main-content">
-            <section>
-                <div class="row">
-                    <div class="col s12 cd-main-header js-cd-main-header">
-                        <h2>Detecting your location...</h2>
-                        <em>please respond to location request dialog</em>
-                    </div>                
+    <div class="container cd-main-content">
+        <section>
+            <div class="row">
+                <div class="col s12 cd-main-header js-cd-main-header white-text">
+                    <h2>Welcome to your City Dashboard!</h2>
+                    <div class="col s12 m8 l8 xl8 offset-m2 offset-l2 offset-xl2 js-cd-info-panel">
+                        <div class="card-panel grey darken-4 z-depth-4">
+                            <p>I can give you some useful information about your current city or any city in the world!</p>
+                        <p>I'm going to need to know your location if you want to get information about your current city. 
+                            <br>Otherwise, you can ignore the location request and type in any city name.</p>
+                        <p>Click on the Let's Go button to get started!</p>
+                        <em>(you'll see the location request dialog next)</em>
+                        </div>
+                    </div>                    
+                    <button class="js-cd-go-button cd-go-button waves-effect waves-light btn green valign-wrapper">Let's Go!</button>
                 </div>
-            </section>
-            <section class="js-cd-content-area-container">
-                <div class="row cd-search-container js-cd-search-container">
-                    <div class="input-field col s12">
-                        <form id="cd-search-form" > 
-                            <i class="material-icons prefix">search</i>
-                            <input type="text" id="cd-search-input" name="cd-search-input" class="autocomplete" placeholder="start typing city name and select from list" required>
-                            <label for="cd-search-input">City</label>
-                        </form>
-                    </div>
+            </div>
+        </section>
+        <section class="js-cd-content-area-container">
+            <div class="row cd-search-container js-cd-search-container">
+                <div class="input-field col s12">
+                    <form id="cd-search-form">
+                        <i class="material-icons prefix white-text">search</i>
+                        <input type="text" id="cd-search-input" name="cd-search-input" class="autocomplete white-text" placeholder="start typing city name and select from list"
+                            required>
+                        <label for="cd-search-input" class="white-text">City</label>
+                    </form>
                 </div>
-                <div class="js-cd-loader cd-loader">
-                    <em>getting your city's data...</em>
-                    <div class="preloader-wrapper big active">                    
-                        <div class="spinner-layer spinner-blue-only">
-                            <div class="circle-clipper left">
-                                <div class="circle"></div>
-                            </div>
-                            <div class="gap-patch">
-                                <div class="circle"></div>
-                            </div><div class="circle-clipper right">
-                                <div class="circle"></div>
-                            </div>
+            </div>
+            <div class="js-cd-loader cd-loader white-text">
+                <em>getting your city's data...</em>
+                <div class="preloader-wrapper big active">
+                    <div class="spinner-layer spinner-blue-only">
+                        <div class="circle-clipper left">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                            <div class="circle"></div>
                         </div>
                     </div>
                 </div>
-            </section>
-                   
-        </div>    
-    </body>
-    <div class="cd-photo-attribution js-cd-photo-attribution">Photo by Andy Amaya / Unsplash</div>
+            </div>
+        </section>
+
+    </div>
+</body>
+<div class="cd-photo-attribution js-cd-photo-attribution">Photo by Andy Amaya / Unsplash</div>
+
 </html>
