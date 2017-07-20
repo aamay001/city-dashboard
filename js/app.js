@@ -28,8 +28,11 @@ var cdUserLocation = {
 const CD_HTML = {
         navBar : '.js-cd-navbar',
         navBarText : '.js-cd-navbar h1',
+        infoPanel: '.js-cd-info-panel',
+        goButton : '.js-cd-go-button',
         banner : '.js-cd-main-header',
         bannerHeader : '.js-cd-main-header h2',
+        bannerParagraphs : '.js-cd-main-header p',
         bannerSubtext : '.js-cd-main-header em',
         searchContainer : '.js-cd-search-container',
         searchInput: 'cd-search-input',
@@ -46,7 +49,15 @@ $(onReady);
 function onReady() {
     bindUserInput();    
     cdAutcomplete.addListener('place_changed', onPlaceChanged);
-    getUserLocation();
+}
+
+function bindUserInput() {
+    $(CD_HTML.goButton).on('click', getUserLocation);
+    $(CD_HTML.serachForm).on('submit', onSearchSubmit);
+    cdAutcomplete = new google.maps.places.Autocomplete(
+        document.getElementById(CD_HTML.searchInput),
+        { types : ['(cities)'] }
+    );
 }
 
 function onPlaceChanged() {
@@ -63,14 +74,6 @@ function onPlaceChanged() {
         handleError('Bad input.');
         $('#' + CD_HTML.searchInput).addClass('invalid');
     }
-}
-
-function bindUserInput() {
-    $(CD_HTML.serachForm).on('submit', onSearchSubmit);
-    cdAutcomplete = new google.maps.places.Autocomplete(
-        document.getElementById(CD_HTML.searchInput),
-        { types : ['(cities)'] }
-    );
 }
 
 function onSearchSubmit(event) {
@@ -101,7 +104,10 @@ function showSearch() {
     $(CD_HTML.photoAttrib).hide();
     $(CD_HTML.loader).hide();
     $(CD_HTML.bannerSubtext).hide();
+    $(CD_HTML.goButton).hide();
+    $(CD_HTML.infoPanel).hide();
     $(CD_HTML.bannerHeader).text("Select your city from the list.")
+    $(CD_HTML.bannerParagraphs).hide();
     $(CD_HTML.searchContainer).fadeIn('slow');
 }
 
@@ -143,7 +149,7 @@ function showWeatherInformation(res) {
 function showLocalFood() {
     let mapInfoWindows = [];    
     let localFoodHtml = getLocalFood();
-    addHeaderRow("Local Restaurants");
+    addHeaderRow("Local Restaurants");    
     $(CD_HTML.contentAreaContainer).append(localFoodHtml);
     let mapCenter = { lat : cdUserLocation.latitude, lng : cdUserLocation.longitude };
     let foodMap = new google.maps.Map(document.getElementById('cd-localfood-map'), {
@@ -152,7 +158,7 @@ function showLocalFood() {
                                                                             });
     let foodRequest = {
         location : mapCenter,
-        radius: '500',
+        radius: '1000',
         query : 'restaurant'
     };
 
@@ -162,7 +168,9 @@ function showLocalFood() {
             for (let i = 0; i < results.length; i++) {
                 let place = results[i];
                 //console.log(place);
-                let infoWindowContent = `<h6>${place.name}</h6>`;
+                let infoWindowContent = `<h6>${place.name}</h6>
+                                         <p>${place.formatted_address.replace(',', '<br>')}</p>`;
+
                 let infoWindow = new google.maps.InfoWindow({
                     content : infoWindowContent
                 }); 
@@ -170,7 +178,7 @@ function showLocalFood() {
                     map: foodMap,
                     position : place.geometry.location,
                     animation: google.maps.Animation.DROP,
-                    icon : place.icon
+                    icon : { url : place.icon, scaledSize : new google.maps.Size(21,21) }
                 });
                 mapInfoWindows.push(infoWindow);
                 marker.addListener('click', function() { 

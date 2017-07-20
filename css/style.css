@@ -3,6 +3,11 @@ html
     min-width: 320px;
 }
 
+input
+{
+    border-bottom: 2px solid white !important;
+}
+
 body
 {
     background-color: #fafafa ;
@@ -10,6 +15,7 @@ body
     background-size: cover;
     color: #000000;
     background-attachment: fixed;
+    background-image:url('/assets/landing.jpg');
 }
 
 h4
@@ -22,16 +28,30 @@ h4
     font-size: 1.7rem;
     line-height: 110%;
     margin: 1.14rem 0 .912rem 0;
+    display: inline-block;
 }
 
 .cd-main-header
 {
     text-align: center;
+    margin-top : 90px;
+    text-shadow: 1px 1px black;
 }
 
 .cd-main-header h2
 {
     font-size: 1.9rem;
+}
+
+.cd-go-button
+{
+    width: 250px;
+    height: 50px;
+    padding-top: 5px;
+    display: block;
+    margin-left:auto;
+    margin-right: auto;
+    top:40px;
 }
 
 .cd-main-content
@@ -73,22 +93,31 @@ h4
     z-index: -1;
 }
 
+.cd-logo-image
+{
+    width: 40px;
+    margin-left:20px;
+    margin-top:2px;
+    float:left;
+}
+
 .cd-photo-attribution a
 {
     color:lightgray;
+    text-decoration: underline;
 }
 
 #cd-search-input::-webkit-input-placeholder { /* Chrome/Opera/Safari */
-  color: black;
+  color: white;
 }
 #cd-search-input::-moz-placeholder { /* Firefox 19+ */
-  color: black;
+  color: white;
 }
 #cd-search-input:-ms-input-placeholder { /* IE 10+ */
-  color: black;
+  color: white;
 }
 #cd-search-input:-moz-placeholder { /* Firefox 18- */
-  color: black;
+  color: white;
 }
 
 .card-title
@@ -108,7 +137,7 @@ h4
     white-space: nowrap;
 }
 
-.card
+.card, .card-panel
 {
     opacity : .90;
 }
@@ -116,4 +145,13 @@ h4
 #cd-localfood-map {
     height: 400px;
     width: 100%;
+}
+
+@media only screen and (max-width:768px){
+    .cd-navbar h1 {
+        font-size: 1.3rem;
+        overflow: hidden;
+        text-overflow : ellipsis;
+        white-space: nowrap;
+    }
 }
