@@ -134,7 +134,7 @@ function setBackground() {
         .then(function(res){
             if (res.urls) {
                 cdUserLocation.background = res.urls.full;
-                $('body').css('background-image', 'url(' + res.urls.regular + ')');
+                $('body').css('background-image', 'url(' +  res.urls.regular + ')');
                 $(CD_HTML.photoAttrib).html(`Photo by <a target="_blank" href="${res.user.links.html}">${res.user.name}</a> / <a target="_blank" href="https://unsplash.com">Unsplash</a>`);
                 $(CD_HTML.photoAttrib).show();
                 $(CD_HTML.mapBackground).fadeIn('slow');
@@ -397,7 +397,7 @@ function getThingsToDo(){
         client_id : CD_FOURSQAURE_API.client_id,
         client_secret : CD_FOURSQAURE_API.client_secret,
         ll : cdUserLocation.latitude + ',' + cdUserLocation.longitude,
-        categoryId : '4bf58dd8d48988d1f1931735' ,
+        categoryId : '4d4b7104d754a06370d81259' ,
         limit : 4,
         v : 20170701
     }
@@ -409,12 +409,12 @@ function getThingsToDo(){
             if ( res.meta.code == 200 ) {                
                 let todo = res.response.venues;                                
                 todo.map(function(item){                    
-                    images.push(item.categories[0] ? item.categories[0].shortName.split(' ')[0] : item.name.split(' ')[0]);
+                    images.push( { name : item.categories[0] ? item.categories[0].shortName.split(' ')[0] : item.name.split(' ')[0], id : 'cd-fs-img-' + images.length } );
                     element.append(
                     `<div class="col s12 m6 l6 xl3">
                         <div class="card z-depth-4">
-                            <div class="card-image blue lighten-2">
-                                <img id="${images[images.length-1]}">
+                            <div class="card-image black">
+                                <img id="${images[images.length-1].id}">
                                 <span class="card-title">${ item.name }</span>
                             </div>
                             <div class="card-content">
@@ -444,13 +444,13 @@ function getTodoImages(images){
         let params = {
             url: CD_UNSPLASH_API.url,
             client_id : CD_UNSPLASH_API.client_id,
-            query : item
+            query : item.name
         }
         
         $.getJSON(CD_UNSPLASH_API.url, params)
             .then(function(res){            
                 if (res.urls) {
-                    $("#"+item).attr('src', res.urls.regular);
+                    $("#"+item.id).attr('src', res.urls.regular);
                 }
             })
             .catch(function(err) {

@@ -153,6 +153,7 @@ h4
 .card-image img
 {
     height: 200px;
+    opacity: .7;
 }
 
 #cd-things-todo .card-content
