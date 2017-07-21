@@ -10,12 +10,12 @@ const CD_GOOGLE_APIS = {
 const CD_ACCUWEATHER_API = {
     citySearchUrl : 'https://dataservice.accuweather.com/locations/v1/geoposition/search',
     foreCastUrl : 'https://dataservice.accuweather.com/forecasts/v1/daily/5day/',
-    key : 'kyIAyPHx697TIyvEGzTEBDkO1e107PQX'
+    key : 'sR19s15XEmiAuwGfXgN6g2dWU6KEG4Lu'
 };
 
 const CD_UNSPLASH_API = {
     url : 'https://api.unsplash.com/photos/random',
-    client_id : '4cfdde8d5a5a196a85132329084298f8ff30334826ae24b7f0d38a6d5397e238'
+    client_id : '6995573f42a4ac97128e536b347ce8605780e7d50cb55e6fe5f910fef38962db'
 };
 
 const CD_FOURSQAURE_API = {
@@ -36,6 +36,7 @@ const CD_HTML = {
         navBarText : '.js-cd-navbar h1',
         infoPanel: '.js-cd-info-panel',
         goButton : '.js-cd-go-button',
+        searchButton : '.js-cd-search-button',
         banner : '.js-cd-main-header',
         bannerHeader : '.js-cd-main-header h2',
         bannerParagraphs : '.js-cd-main-header p',
@@ -59,6 +60,7 @@ function onReady() {
 
 function bindUserInput() {
     $(CD_HTML.goButton).on('click', getUserLocation);
+    $(CD_HTML.searchButton).on('click', showSearch);
     $(CD_HTML.serachForm).on('submit', onSearchSubmit);
     cdAutcomplete = new google.maps.places.Autocomplete(
         document.getElementById(CD_HTML.searchInput),
@@ -111,6 +113,7 @@ function showSearch() {
     $(CD_HTML.loader).hide();
     $(CD_HTML.bannerSubtext).hide();
     $(CD_HTML.goButton).hide();
+    $(CD_HTML.searchButton).hide();
     $(CD_HTML.infoPanel).hide();
     $(CD_HTML.bannerHeader).text("Select your city from the list.")
     $(CD_HTML.bannerParagraphs).hide();
