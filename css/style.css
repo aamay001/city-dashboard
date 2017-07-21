@@ -13,11 +13,11 @@ input
 body
 {
     background-color: #fafafa ;
-    background-repeat: no-repeat;
-    background-size: cover;
+    background-repeat: no-repeat;    
     color: #000000;
-    background-attachment: fixed;
     background-image:url('../assets/landing.jpg');
+    background-attachment: fixed;
+    background-size: cover;    
 }
 
 h4
@@ -36,7 +36,7 @@ h4
 .cd-main-header
 {
     text-align: center;
-    margin-top : 90px;
+    margin-top : 5px;
     text-shadow: 1px 1px black;
 }
 
@@ -141,7 +141,7 @@ h4
 
 .card, .card-panel
 {
-    opacity : .90;
+    opacity : .95;
 }
 
 #cd-localfood-map 
@@ -165,7 +165,51 @@ h4
 {
     text-shadow: 1px 1px black;
     font-size: 25px !important; 
-    font-weight: bold;
+}
+
+#cd-gmjsapi img
+{
+    width: 50px;
+}
+
+#cd-awapi img
+{
+    width : 150px;
+    margin-bottom: 15px;
+}
+
+#cd-fsapi img
+{
+    width : 50px;
+}
+
+#cd-usapi img
+{
+    width: 50px;
+}
+
+#cd-mat svg
+{
+    width:55px;
+}
+
+#cd-jq img
+{
+    width: 35px;
+    margin-bottom: 10px;
+}
+
+#cd-gmjsapi, #cd-awapi, #cd-fsapi, #cd-usapi, #cd-mat, #cd-jq
+{
+    text-align: center;
+    display : inline-block;
+    margin-left: 12.5px;
+    margin-right: 12.5px;
+}
+
+footer
+{
+    display: none;
 }
 
 @media only screen and (max-width:768px){
@@ -174,5 +218,10 @@ h4
         overflow: hidden;
         text-overflow : ellipsis;
         white-space: nowrap;
+    }
+
+    #cd-gmjsapi, #cd-awapi, #cd-fsapi, #cd-usapi, #cd-mat, #cd-jq
+    {
+        margin-bottom: 35px;
     }
 }

@@ -127,7 +127,7 @@ function showDashboard() {
 function setBackground() {
     let params = {
         client_id : CD_UNSPLASH_API.client_id,
-        query : 'scenery'
+        query : 'city'
     }    
     
     $.getJSON(CD_UNSPLASH_API.url, params)
@@ -214,6 +214,7 @@ function addHeaderRow(headerText){
 function showLocalTodo(){
     addHeaderRow("Things To Do");
     $(CD_HTML.contentAreaContainer).append(getThingsToDo());
+    $("footer").fadeIn('slow');
 }
 
 ///////////////////////////////////////////////////////////////////////////////
