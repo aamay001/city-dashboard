@@ -29,7 +29,8 @@ var cdAutcomplete = {};
 var cdUserLocation = {
         longitude : undefined,
         latitude : undefined,
-        city : undefined, 
+        city : undefined,
+        background : undefined
     };
 
 const CD_HTML = {
