@@ -15,7 +15,8 @@ const CD_ACCUWEATHER_API = {
 
 const CD_UNSPLASH_API = {
     url : 'https://api.unsplash.com/photos/random',
-    client_id : '6995573f42a4ac97128e536b347ce8605780e7d50cb55e6fe5f910fef38962db'
+    client_id : '6995573f42a4ac97128e536b347ce8605780e7d50cb55e6fe5f910fef38962db',
+    attribUTMParam : '?utm_source=city-dashboard&utm_medium=referral&utm_campaign=api-credit'
 };
 
 const CD_FOURSQAURE_API = {
@@ -138,7 +139,9 @@ function setBackground() {
             if (res.urls) {
                 cdUserLocation.background = res.urls.full;
                 $('body').css('background-image', 'url(' +  res.urls.regular + ')');
-                $(CD_HTML.photoAttrib).html(`Photo by <a target="_blank" href="${res.user.links.html}">${res.user.name}</a> / <a target="_blank" href="https://unsplash.com">Unsplash</a>`);
+                $(CD_HTML.photoAttrib).html(`Photo by <a target="_blank" 
+                                                         href="${res.user.links.html + CD_UNSPLASH_API.attribUTMParam}">${res.user.name}</a> / 
+                                                      <a target="_blank" href="https://unsplash.com/${CD_UNSPLASH_API.attribUTMParam}">Unsplash</a>`);
                 $(CD_HTML.photoAttrib).show();
                 $(CD_HTML.mapBackground).fadeIn('slow');
             }
