@@ -217,7 +217,7 @@ function showLocalFood() {
                     map: foodMap,
                     position : place.geometry.location,
                     animation: google.maps.Animation.DROP,
-                    icon : { url: '../assets/marker.png', scaledSize : new google.maps.Size(21,21) }
+                    icon : { url: './assets/marker.png', scaledSize : new google.maps.Size(21,21) }
                 });
                 mapInfoWindows.push(infoWindow);
                 marker.addListener('click', function() { 
