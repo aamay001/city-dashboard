@@ -125,31 +125,44 @@ function showSearch() {
 function showDashboard() {      
     $(CD_HTML.searchContainer).hide();
     $(CD_HTML.banner).hide();
-    $(CD_HTML.navBarText).html(cdUserLocation.city);
+    let cityName = ( typeof(cdUserLocation.city) === 'string' ? 
+                     `${cdUserLocation.city.split(',')[0]}, ${cdUserLocation.city.split(',')[1]}` : 
+                     `${cdUserLocation.city[0].split(',')[0]}, ${cdUserLocation.city[0].split(',')[1]}` );
+    $(CD_HTML.navBarText).html(cityName);
     getWeatherData();
 }
 
 function setBackground() {
-    let params = {
-        client_id : CD_UNSPLASH_API.client_id,
-        query : 'city'
-    }    
-    
-    $.getJSON(CD_UNSPLASH_API.url, params)
-        .then(function(res){
-            if (res.urls) {
-                cdUserLocation.background = res.urls.full;
-                $('body').css('background-image', 'url(' +  res.urls.regular + ')');
-                $(CD_HTML.photoAttrib).html(`Photo by <a target="_blank" 
-                                                         href="${res.user.links.html + CD_UNSPLASH_API.attribUTMParam}">${res.user.name}</a> / 
-                                                      <a target="_blank" href="https://unsplash.com/${CD_UNSPLASH_API.attribUTMParam}">Unsplash</a>`);
-                $(CD_HTML.photoAttrib).show();
-                $(CD_HTML.mapBackground).fadeIn('slow');
-            }
-        })
-        .catch(function(err) {
-            console.log(err);
-        });        
+
+    if ( !sessionStorage.getItem('background') ) {
+        let params = {
+            client_id : CD_UNSPLASH_API.client_id,
+            query : 'city'
+        }    
+        
+        $.getJSON(CD_UNSPLASH_API.url, params)
+            .then(function(res){
+                if (res.urls) {
+                    cdUserLocation.background = res.urls.regular;
+                    sessionStorage.setItem('background', cdUserLocation.background);
+                    sessionStorage.setItem('backgroundAuthorLink', res.user.links.html);
+                    sessionStorage.setItem('backgroundAuthor', res.user.name);                    
+                }
+            })
+            .catch(function(err) {
+                console.log(err);
+            });
+    }
+    else{
+        cdUserLocation.background = sessionStorage.getItem('background');
+    }
+
+    $('body').css('background-image', 'url(' +  cdUserLocation.background + ')');
+    $(CD_HTML.photoAttrib).html(`Photo by <a target="_blank" 
+                                            href="${ sessionStorage.getItem('backgroundAuthorLink') + CD_UNSPLASH_API.attribUTMParam}">${sessionStorage.getItem('backgroundAuthor')}</a> / 
+                                        <a target="_blank" href="https://unsplash.com/${CD_UNSPLASH_API.attribUTMParam}">Unsplash</a>`);
+    $(CD_HTML.photoAttrib).show();
+    $(CD_HTML.mapBackground).fadeIn('slow');
 }
 
 function showWeatherInformation(res) { 
@@ -191,7 +204,7 @@ function showLocalFood() {
                     map: foodMap,
                     position : place.geometry.location,
                     animation: google.maps.Animation.DROP,
-                    icon : { scaledSize : new google.maps.Size(21,21) }
+                    icon : { url: '../assets/marker.png', scaledSize : new google.maps.Size(21,21) }
                 });
                 mapInfoWindows.push(infoWindow);
                 marker.addListener('click', function() { 
