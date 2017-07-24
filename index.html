@@ -28,10 +28,13 @@
     <div class="navbar-fixed">
         <!-- Per Materialize Docs-->
         <nav class="cd-navbar js-cd-navbar blue" role="navigation">
-            <img src="assets/logo.png" alt="The City Dashboard logo." class="cd-logo-image" />
+            <a href="/"><img src="assets/logo.png" alt="The City Dashboard logo." class="cd-logo-image" /></a>
             <span class="brand-logo center white-text">                    
                     <h1>City Dashboard</h1>
             </span>
+            <ul id="nav-mobile" class="right">
+                <li><a onclick="newSearch();">Change City</a></li>
+            </ul>   
         </nav>
     </div>
 
@@ -85,7 +88,6 @@
                 </div>
             </div>
         </section>
-
     </div>
 </body>
 <footer>
@@ -94,8 +96,6 @@
         <div class="col s12 m8 l8 xl8 offset-m2 offset-l2 offset-xl2">
             <div class="card grey-text text-darken-4 z-depth-4 center">
                 <div class="card-content">
-
-
 
                     <div id="cd-awapi">
                         <img src="assets/awapi.svg" alt="AccuWeather API icon.">

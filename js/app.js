@@ -15,7 +15,7 @@ const CD_ACCUWEATHER_API = {
 
 const CD_UNSPLASH_API = {
     url : 'https://api.unsplash.com/photos/random',
-    client_id : '6995573f42a4ac97128e536b347ce8605780e7d50cb55e6fe5f910fef38962db',
+    client_id : 'a9698e9b2689360008f762c5b92efb67c9c33f9141fc65ec81571a08a80ecf30',
     attribUTMParam : '?utm_source=city-dashboard&utm_medium=referral&utm_campaign=api-credit'
 };
 
@@ -50,7 +50,6 @@ const CD_HTML = {
         loader: '.js-cd-loader',
         photoAttrib : '.js-cd-photo-attribution',
         locaFoodMap : '#cd-localfood-map'
-
     };
 
 $(onReady);
@@ -58,6 +57,11 @@ $(onReady);
 function onReady() {
     bindUserInput();    
     cdAutcomplete.addListener('place_changed', onPlaceChanged);
+
+    if(sessionStorage.getItem('newSearch')) {
+        sessionStorage.removeItem('newSearch');
+        showSearch();
+    }
 }
 
 function bindUserInput() {
@@ -107,6 +111,11 @@ function processSelection(){
     }
 }
 
+function newSearch(){
+    sessionStorage.setItem('newSearch', true);
+    window.location = '/';
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // DOM Manip
 ///////////////////////////////////////////////////////////////////////////////
@@ -132,7 +141,7 @@ function showDashboard() {
     getWeatherData();
 }
 
-function setBackground() {
+function getBackground() {
 
     if ( !sessionStorage.getItem('background') ) {
         let params = {
@@ -146,7 +155,8 @@ function setBackground() {
                     cdUserLocation.background = res.urls.regular;
                     sessionStorage.setItem('background', cdUserLocation.background);
                     sessionStorage.setItem('backgroundAuthorLink', res.user.links.html);
-                    sessionStorage.setItem('backgroundAuthor', res.user.name);                    
+                    sessionStorage.setItem('backgroundAuthor', res.user.name);
+                    setBackground();                   
                 }
             })
             .catch(function(err) {
@@ -155,8 +165,11 @@ function setBackground() {
     }
     else{
         cdUserLocation.background = sessionStorage.getItem('background');
-    }
+        setBackground();
+    }    
+}
 
+function setBackground(){
     $('body').css('background-image', 'url(' +  cdUserLocation.background + ')');
     $(CD_HTML.photoAttrib).html(`Photo by <a target="_blank" 
                                             href="${ sessionStorage.getItem('backgroundAuthorLink') + CD_UNSPLASH_API.attribUTMParam}">${sessionStorage.getItem('backgroundAuthor')}</a> / 
@@ -379,7 +392,7 @@ function getWeatherDataHTML() {
         }
     );
 
-    setBackground();
+    getBackground();
     return element;
 }
 

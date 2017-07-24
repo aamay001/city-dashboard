@@ -158,12 +158,18 @@ h4
 #cd-things-todo .card-content
 {
     height: 100px;
+    overflow: hidden;
+    text-overflow : ellipsis;
+    white-space: nowrap;    
 }
 
 #cd-things-todo .card-title
 {
     text-shadow: 1px 1px black;
-    font-size: 25px !important; 
+    font-size: 25px !important;
+    overflow: hidden;
+    text-overflow : ellipsis;
+    max-height: 215px;
 }
 
 #cd-gmjsapi img
