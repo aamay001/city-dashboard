@@ -113,7 +113,7 @@ function processSelection(){
 
 function newSearch(){
     sessionStorage.setItem('newSearch', true);
-    window.location = '/';
+    window.location = './';
 }
 
 ///////////////////////////////////////////////////////////////////////////////
