@@ -159,8 +159,7 @@ h4
 {
     height: 100px;
     overflow: hidden;
-    text-overflow : ellipsis;
-    white-space: nowrap;    
+    text-overflow : ellipsis;   
 }
 
 #cd-things-todo .card-title
