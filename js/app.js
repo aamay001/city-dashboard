@@ -36,6 +36,7 @@ var cdUserLocation = {
 const CD_HTML = {
         navBar : '.js-cd-navbar',
         navBarText : '.js-cd-navbar h1',
+        changeCityButton : '.js-cd-navbar li',
         infoPanel: '.js-cd-info-panel',
         goButton : '.js-cd-go-button',
         searchButton : '.js-cd-search-button',
@@ -120,6 +121,7 @@ function newSearch(){
 // DOM Manip
 ///////////////////////////////////////////////////////////////////////////////
 function showSearch() {
+    $(CD_HTML.changeCityButton).hide();
     $(CD_HTML.photoAttrib).hide();
     $(CD_HTML.loader).hide();
     $(CD_HTML.bannerSubtext).hide();
@@ -138,6 +140,7 @@ function showDashboard() {
                      `${cdUserLocation.city.split(',')[0]}, ${cdUserLocation.city.split(',')[1]}` : 
                      `${cdUserLocation.city[0].split(',')[0]}, ${cdUserLocation.city[0].split(',')[1]}` );
     $(CD_HTML.navBarText).html(cityName);
+    $(CD_HTML.changeCityButton).show();
     getWeatherData();
 }
 

@@ -33,6 +33,11 @@ h4
     display: inline-block;
 }
 
+.cd-navbar li
+{
+    display: none;
+}
+
 .cd-main-header
 {
     text-align: center;
