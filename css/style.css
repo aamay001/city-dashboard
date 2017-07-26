@@ -236,6 +236,6 @@ footer
 
     body
     {
-        background-size: initial;    
+        background-size: auto 100%; 
     }
 }
