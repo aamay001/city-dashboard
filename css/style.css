@@ -43,6 +43,7 @@ h4
     text-align: center;
     margin-top : 5px;
     text-shadow: 1px 1px black;
+    min-height: 100vh;
 }
 
 .cd-main-header h2
