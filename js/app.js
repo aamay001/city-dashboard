@@ -47,6 +47,7 @@ const CD_HTML = {
         searchContainer : '.js-cd-search-container',
         searchInput: 'cd-search-input',
         contentAreaContainer : '.js-cd-content-area-container',
+        mainContent : '.cd-main-content',
         serachForm : "#cd-search-form",
         loader: '.js-cd-loader',
         photoAttrib : '.js-cd-photo-attribution',
@@ -173,6 +174,7 @@ function getBackground() {
 }
 
 function setBackground(){
+    $(CD_HTML.mainContent).css('padding-bottom', '0');
     $('body').css('background-image', 'url(' +  cdUserLocation.background + ')');
     $(CD_HTML.photoAttrib).html(`Photo by <a target="_blank" 
                                             href="${ sessionStorage.getItem('backgroundAuthorLink') + CD_UNSPLASH_API.attribUTMParam}">${sessionStorage.getItem('backgroundAuthor')}</a> / 
