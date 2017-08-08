@@ -15,7 +15,7 @@ const CD_ACCUWEATHER_API = {
 
 const CD_UNSPLASH_API = {
     url : 'https://api.unsplash.com/photos/random',
-    client_id : 'a9698e9b2689360008f762c5b92efb67c9c33f9141fc65ec81571a08a80ecf30',
+    client_id : '4cfdde8d5a5a196a85132329084298f8ff30334826ae24b7f0d38a6d5397e238',
     attribUTMParam : '?utm_source=city-dashboard&utm_medium=referral&utm_campaign=api-credit'
 };
 
@@ -358,7 +358,7 @@ function getWeatherLocationKeySuccess(res) {
 
 function getFormattedDate(dtVal) {
     let weekday = new Array(7);
-        weekday[0] =  "Sunday";
+        weekday[0] = "Sunday";
         weekday[1] = "Monday";
         weekday[2] = "Tuesday";
         weekday[3] = "Wednesday";
