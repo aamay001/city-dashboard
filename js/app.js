@@ -368,7 +368,7 @@ function getFormattedDate(dtVal) {
         weekday[5] = "Friday";
         weekday[6] = "Saturday";
     let dt = new Date(dtVal * 1000);
-    let dtString = `${weekday[dt.getDay()]}, ${dt.getMonth()}/${dt.getDate()}/${dt.getFullYear()}`; 
+    let dtString = `${weekday[dt.getDay()]}, ${dt.getMonth()+1}/${dt.getDate()}/${dt.getFullYear()}`; 
     return dtString;
 }
 
