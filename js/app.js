@@ -83,7 +83,6 @@ function onPlaceChanged() {
     if ( cdUserLocation.city.geometry ) {
         cdUserLocation.latitude = cdUserLocation.city.geometry.location.lat();
         cdUserLocation.longitude = cdUserLocation.city.geometry.location.lng();
-        console.log(cdUserLocation);
         processSelection();
     }
     else {
@@ -102,12 +101,12 @@ function onSearchSubmit(event) {
 }
 
 function processSelection(){    
-    $(CD_HTML.loader).show();    
-    if (cdUserLocation.city.id) {
+    $(CD_HTML.loader).show();
+    if (cdUserLocation.city.place_id) {
         cdUserLocation.city = [ $("#" + CD_HTML.searchInput).val() ];
         showDashboard(cdUserLocation);
     } else {
-        console.log('Bad input.');
+        console.error('Bad input.');
         $('#' + CD_HTML.searchInput).addClass('invalid');
         $(CD_HTML.loader).hide(); 
     }
@@ -138,8 +137,8 @@ function showDashboard() {
     $(CD_HTML.searchContainer).hide();
     $(CD_HTML.banner).hide();
     let cityName = ( typeof(cdUserLocation.city) === 'string' ? 
-                     `${cdUserLocation.city.split(',')[0]}, ${cdUserLocation.city.split(',')[1]}` : 
-                     `${cdUserLocation.city[0].split(',')[0]}, ${cdUserLocation.city[0].split(',')[1]}` );
+      `${cdUserLocation.city.split(',')[0]}, ${cdUserLocation.city.split(',')[1]}` : 
+      `${cdUserLocation.city[0].split(',')[0]}, ${cdUserLocation.city[0].split(',')[1]}` );
     $(CD_HTML.navBarText).html(cityName);
     $(CD_HTML.changeCityButton).show();
     getWeatherData();
@@ -164,7 +163,7 @@ function getBackground() {
                 }
             })
             .catch(function(err) {
-                console.log(err);
+                console.error(err);
             });
     }
     else{
@@ -177,8 +176,8 @@ function setBackground(){
     $(CD_HTML.mainContent).css('padding-bottom', '0');
     $('body').css('background-image', 'url(' +  cdUserLocation.background + ')');
     $(CD_HTML.photoAttrib).html(`Photo by <a target="_blank" 
-                                            href="${ sessionStorage.getItem('backgroundAuthorLink') + CD_UNSPLASH_API.attribUTMParam}">${sessionStorage.getItem('backgroundAuthor')}</a> / 
-                                        <a target="_blank" href="https://unsplash.com/${CD_UNSPLASH_API.attribUTMParam}">Unsplash</a>`);
+        href="${ sessionStorage.getItem('backgroundAuthorLink') + CD_UNSPLASH_API.attribUTMParam}">${sessionStorage.getItem('backgroundAuthor')}</a> / 
+        <a target="_blank" href="https://unsplash.com/${CD_UNSPLASH_API.attribUTMParam}">Unsplash</a>`);
     $(CD_HTML.photoAttrib).show();
     $(CD_HTML.mapBackground).fadeIn('slow');
 }
@@ -213,7 +212,7 @@ function showLocalFood() {
                 let place = results[i];
                 //console.log(place);
                 let infoWindowContent = `<h6>${place.name}</h6>
-                                         <p>${place.formatted_address.replace(',', '<br>')}</p>`;
+                                        <p>${place.formatted_address.replace(',', '<br>')}</p>`;
 
                 let infoWindow = new google.maps.InfoWindow({
                     content : infoWindowContent
@@ -259,6 +258,8 @@ function showLocalTodo(){
 // Geo Location
 ///////////////////////////////////////////////////////////////////////////////
 function getUserLocation() {
+    $(CD_HTML.banner).hide();
+    $(CD_HTML.loader).show();
     let geolocationOps = {
             enableHighAccuracy: true, 
             maximumAge        : 30000, 
@@ -295,22 +296,22 @@ function getUserLocality(position) {
                     });
 
                 cdUserLocation.city = cities[0];    
-                console.log( `User location updated: ${cdUserLocation.city}` );
+                // console.log( `User location updated: ${cdUserLocation.city}` );
                 showDashboard();                
 
             } else {
-                console.log('User locality could not be determined.');
+                // console.log('User locality could not be determined.');
                 showSearch();
             }
         })
         .catch(function(err){
-            console.log(err);
+            console.error(err);
             showSearch();
         });
 }
 
 function handleError(err){
-    console.log(err);
+    console.error(err);
     showSearch();
 }
 
@@ -342,13 +343,13 @@ function getWeatherLocationKeySuccess(res) {
 
                 cdUserLocation.weather = res.DailyForecasts;
                 cdUserLocation.weather.pop();
-                console.log(`User location updated: Temp ${cdUserLocation.weather[0].Temperature.Maximum.Value}°F`);
+                // console.log(`User location updated: Temp ${cdUserLocation.weather[0].Temperature.Maximum.Value}°F`);
                 showWeatherInformation();
                 showLocalFood();
             })
             .catch(function(err){
-                console.log('Error getting weather forecast.');
-                console.log(err.message);
+                console.error('Error getting weather forecast.');
+                console.error(err.message);
                 $(CD_HTML.photoAttrib).hide();
                 alert('There was an error getting weather data. Sorry!');
             });
@@ -402,8 +403,8 @@ function getWeatherDataHTML() {
 }
 
 function showWeatherError(err) {
-    console.log('Error getting weather.');
-    console.log(err.message);
+    console.error('Error getting weather.');
+    console.error(err.message);
     showSearch();
 }
 
@@ -493,7 +494,7 @@ function getTodoImages(images){
                 }
             })
             .catch(function(err) {
-                console.log(err);
+                console.error(err);
             })
     }) 
 }
