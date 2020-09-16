@@ -280,12 +280,13 @@ function getUserLocality(position) {
     cdUserLocation.latitude = position.coords.latitude;    
 
     let params = {
-                    latlng : cdUserLocation.latitude + ',' + cdUserLocation.longitude,
-                    key : CD_GOOGLE_APIS.GEOCODING.key
-                 }
+      latlng : cdUserLocation.latitude + ',' + cdUserLocation.longitude,
+      key : CD_GOOGLE_APIS.GEOCODING.key
+    };
     $.getJSON(CD_GOOGLE_APIS.GEOCODING.url, params)
         .then(function(res){
             if (res.results) {
+              console.log(res.results)
                 let cities = res.results.map(
                     function(item) {
                         if ( item.formatted_address && "locality" === item.types[0] )
@@ -301,11 +302,13 @@ function getUserLocality(position) {
 
             } else {
                 // console.log('User locality could not be determined.');
+                document.getElementById(CD_HTML.searchInput).placeholder = "we could not determine your location, start typing city name and select from list";
                 showSearch();
             }
         })
         .catch(function(err){
             console.error(err);
+            document.getElementById(CD_HTML.searchInput).placeholder = "we could not determine your location, start typing city name and select from list";
             showSearch();
         });
 }
